@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#fbf8ff;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,16px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {"colors": {"on-primary-container": "#ebe4ff", "on-surface": "#1a1b22", "surface-container-highest": "#e3e1eb", "tertiary": "#534978", "outline-variant": "#cac4d7", "on-secondary-fixed-variant": "#4c2aad", "surface-bright": "#fbf8ff", "on-primary": "#ffffff", "inverse-surface": "#2f3037", "primary-fixed": "#e6deff", "surface-container-high": "#e9e7f1", "tertiary-fixed": "#e7deff", "on-primary-fixed-variant": "#4a21be", "on-background": "#1a1b22", "surface-container": "#eeedf7", "on-error": "#ffffff", "outline": "#797586", "secondary-fixed": "#e7deff", "surface-container-lowest": "#ffffff", "on-error-container": "#93000a", "inverse-primary": "#cbbeff", "tertiary-fixed-dim": "#ccbff6", "secondary-fixed-dim": "#ccbeff", "on-tertiary": "#ffffff", "surface-variant": "#e3e1eb", "surface-container-low": "#f4f2fc", "on-secondary-container": "#2e0085", "surface": "#fbf8ff", "secondary-container": "#987cfe", "surface-dim": "#dad9e3", "on-secondary-fixed": "#1f0060", "on-primary-fixed": "#1d0061", "on-tertiary-container": "#ece4ff", "background": "#fbf8ff", "surface-tint": "#6241d6", "on-surface-variant": "#484554", "tertiary-container": "#6b6192", "primary-fixed-dim": "#cbbeff", "error-container": "#ffdad6", "on-tertiary-fixed-variant": "#4a406f", "error": "#ba1a1a", "on-secondary": "#ffffff", "secondary": "#6446c6", "primary-container": "#6c4ce0", "inverse-on-surface": "#f1eff9", "primary": "#532ec7", "on-tertiary-fixed": "#1e1340"}, "borderRadius": {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"}, "spacing": {"gutter-md": "16px", "screen-margin": "20px", "gutter-lg": "24px", "gutter-sm": "8px", "card-padding": "20px", "radius-pill": "9999px"}, "fontFamily": {"body-lg": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "headline-xl": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"]}, "fontSize": {"body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}], "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}], "headline-md": ["22px", {"lineHeight": "28px", "fontWeight": "600"}], "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}], "label-sm": ["11px", {"lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "600"}], "headline-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}], "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}], "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "700"}], "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}]}}}};</script></head><body class="bg-background font-body-md text-on-surface flex flex-col min-h-screen relative overflow-x-hidden"><div class="absolute top-0 left-1/4 w-72 h-72 bg-primary-container/15 rounded-full blur-[80px] pointer-events-none -z-10"></div><div class="absolute top-1/3 right-[-10%] w-80 h-80 bg-secondary-container/15 rounded-full blur-[90px] pointer-events-none -z-10"></div><header class="fixed top-0 inset-x-0 z-50 bg-surface/75 backdrop-blur-xl pt-safe shadow-[0_4px_20px_rgba(108,76,224,0.04)]"><div class="h-16 px-screen-margin flex items-center justify-between"><div class="flex items-center gap-3"><img alt="Ritme Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLcAwk4Rc4RBV0thaXEntGI95gC4rFVGLTx6lBWkaKrcrSfHW-POLGKKIgyxxh20W3qAZOmPQP-LLWmNjVOkQCH0LdL12RTlMNFEw4XxgfSaHqiw9SoldV-ozmv4xbbXnSEtkzepzI1IIWZzOQPq1YjBUPazqq13wIYmZ_aW2MWSqtX28S0TmsPRKSI_UMNQ5yLLy0lZ2JqBBRpGsmZZrTja0eT54ebYlW7-zCUGAy5FPvpCiDQacI"/><span class="font-headline-md text-on-surface tracking-tight">Home</span></div><div class="flex items-center gap-2.5"><button class="w-10 h-10 rounded-full flex items-center justify-center bg-white/60 backdrop-blur-md text-on-surface-variant hover:text-primary transition-colors shadow-sm"><span class="material-symbols-outlined text-[20px]">notifications</span></button><div class="w-9 h-9 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-on-primary shadow-sm ring-2 ring-primary-fixed/40"><span class="material-symbols-outlined text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full px-screen-margin pt-16 pb-28 bg-transparent flex-1"><div class="flex flex-col w-full gap-5 pb-6">
+<!-- Ambient Glow Elements inside screen flow -->
+<div class="relative w-full">
+<!-- Header Title Info with Chameleon Badge -->
+<div class="flex items-center justify-between gap-2">
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5 text-primary">
+<span class="material-symbols-outlined text-[18px]">auto_mode</span>
+<span class="font-label-sm uppercase tracking-wider">Antarmuka Bunglon</span>
+</div>
+<h2 class="font-headline-sm text-on-surface">Adaptive Glass OS</h2>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary-fixed/60 backdrop-blur-md text-on-primary-fixed-variant shadow-sm">
+<span class="inline-block w-2 h-2 rounded-full bg-primary animate-ping"></span>
+<span class="font-label-sm">Gemini Ambient v2.6</span>
+</div>
+</div>
+</div>
+<!-- Segmented Context Switcher Pill Container -->
+<div class="w-full p-1.5 rounded-full bg-surface-container/80 backdrop-blur-xl shadow-sm flex items-center justify-between gap-1" id="modeSwitcher">
+<button class="flex-1 py-2 px-2.5 rounded-full flex items-center justify-center gap-1.5 bg-primary text-on-primary shadow-md transition-all duration-300" id="btnFocus" onclick="switchMode('focus')">
+<span class="material-symbols-outlined text-[16px]">menu_book</span>
+<span class="font-label-sm truncate">Fokus 📚</span>
+</button>
+<button class="flex-1 py-2 px-2.5 rounded-full flex items-center justify-center gap-1.5 text-on-surface-variant hover:text-primary transition-all duration-300" id="btnNight" onclick="switchMode('night')">
+<span class="material-symbols-outlined text-[16px]">nights_stay</span>
+<span class="font-label-sm truncate">Santai 🌙</span>
+</button>
+<button class="flex-1 py-2 px-2.5 rounded-full flex items-center justify-center gap-1.5 text-on-surface-variant hover:text-primary transition-all duration-300" id="btnNormal" onclick="switchMode('normal')">
+<span class="material-symbols-outlined text-[16px]">bolt</span>
+<span class="font-label-sm truncate">Normal ⚡</span>
+</button>
+</div>
+<!-- Live Dynamic Canvas Showcase -->
+<div class="relative flex flex-col gap-4 transition-all duration-500 rounded-3xl" id="canvasViewport">
+<!-- Active Spotlight Study Card (Mode Fokus Highlight) -->
+<div class="relative overflow-hidden rounded-2xl bg-surface-container-lowest/80 backdrop-blur-2xl p-card-padding shadow-xl shadow-primary-container/10 transition-all duration-500" id="studyCard">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed-variant">
+<span class="material-symbols-outlined text-[18px]">school</span>
+</span>
+<div>
+<span class="font-label-sm text-primary font-semibold block uppercase">Modul Kuliah Aktif</span>
+<h3 class="font-headline-sm text-on-surface">Catatan: Sistem Terdistribusi</h3>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-secondary-container/20 text-on-secondary-fixed-variant font-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">timer</span>
+<span>45m Sesi</span>
+</span>
+</div>
+<!-- Markdown Preview Snippet with Glow Highlights -->
+<div class="p-3.5 rounded-xl bg-surface-container-low/70 backdrop-blur-md mb-3 flex flex-col gap-2">
+<div class="flex items-center gap-2 text-outline">
+<span class="material-symbols-outlined text-[15px]">code</span>
+<span class="font-label-sm">consensus_raft.md • Bab 4.2</span>
+</div>
+<p class="font-body-md text-on-surface leading-relaxed">
+          Dalam <span class="bg-primary-fixed/80 text-on-primary-fixed font-medium px-1 rounded">Raft Consensus Algorithm</span>, status node dibagi menjadi tiga hierarki:
+        </p>
+<div class="flex flex-col gap-1.5 pl-2 mt-0.5">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span class="font-body-sm text-on-surface-variant font-medium">Leader</span>
+<span class="font-body-sm text-outline-variant">— mengelola append entries &amp; heartbeat</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="font-body-sm text-on-surface-variant font-medium">Candidate</span>
+<span class="font-body-sm text-outline-variant">— meminta voting ketika timeout terjadi</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span class="font-body-sm text-on-surface-variant font-medium">Follower</span>
+<span class="font-body-sm text-outline-variant">— mendengarkan sinyal dari Leader</span>
+</div>
+</div>
+</div>
+<!-- Floating Lo-Fi Ambient Study Beats Controller -->
+<div class="flex items-center justify-between p-2.5 rounded-full bg-gradient-to-r from-primary/10 via-secondary/15 to-primary/10 backdrop-blur-lg">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-md">
+<span class="material-symbols-outlined text-[20px] animate-pulse">music_note</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-on-surface truncate">Lo-Fi Study Beats</span>
+<span class="font-body-sm text-primary">Ambient BPM 64 • Alpha Waves</span>
+</div>
+</div>
+<button aria-label="Toggle Play" class="w-8 h-8 rounded-full bg-surface-container-lowest text-primary shadow-sm flex items-center justify-center hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]">pause</span>
+</button>
+</div>
+</div>
+<!-- Distraction Shielded Cards (Blur Shield for Focus Mode) -->
+<div class="relative transition-all duration-500" id="shieldedSection">
+<!-- Obscured background items (Finances & Generic Reminders) -->
+<div class="grid grid-cols-2 gap-3">
+<!-- Finance Card (Shielded) -->
+<div class="p-card-padding rounded-2xl bg-surface-container-high/60 backdrop-blur-md flex flex-col justify-between h-36">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-on-surface-variant">Dompet Utama</span>
+<span class="material-symbols-outlined text-[18px] text-tertiary">account_balance_wallet</span>
+</div>
+<div>
+<div class="font-headline-sm text-on-surface font-bold">Rp 2.450.000</div>
+<span class="font-body-sm text-outline">Pengeluaran hari ini: Rp 48k</span>
+</div>
+</div>
+<!-- Task Inbox (Shielded) -->
+<div class="p-card-padding rounded-2xl bg-surface-container-high/60 backdrop-blur-md flex flex-col justify-between h-36">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-on-surface-variant">Pending Belanja</span>
+<span class="material-symbols-outlined text-[18px] text-tertiary">shopping_bag</span>
+</div>
+<div>
+<div class="font-headline-sm text-on-surface font-bold">4 Pesanan</div>
+<span class="font-body-sm text-outline">Tokopedia &amp; Kopi</span>
+</div>
+</div>
+</div>
+<!-- Glass Shield Overlay Barrier -->
+<div class="absolute inset-0 rounded-2xl bg-surface/40 backdrop-blur-xl flex flex-col items-center justify-center p-4 text-center shadow-inner transition-all duration-500" id="focusOverlay">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center mb-2 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+</div>
+<span class="font-label-md text-on-surface font-semibold">Disamarkan Demi Fokus Maksimal</span>
+<p class="font-body-sm text-on-surface-variant max-w-[240px] mt-0.5">
+          Notifikasi keuangan &amp; belanja dimatikan saat kamu sedang mendalami materi.
+        </p>
+</div>
+</div>
+<!-- Mode Malam / Daily Win Showcase Card (Transforms on Santai switch) -->
+<div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1b1535] via-[#241c48] to-[#120e24] text-on-primary p-card-padding shadow-2xl transition-all duration-500" id="nightWinCard">
+<!-- Midnight Ambient Orb Inside Card -->
+<div class="absolute -right-8 -top-8 w-40 h-40 bg-secondary-container/25 rounded-full blur-2xl pointer-events-none"></div>
+<div class="relative z-10 flex flex-col gap-3.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-fixed text-[22px]">arrow_back_ios_new</span>
+<span class="font-label-md text-secondary-fixed tracking-wide">Refleksi Kemenangan (Daily Wins)</span>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-primary-fixed/20 text-secondary-fixed text-label-sm font-semibold">21:40 WIB</span>
+</div>
+<div class="flex flex-col gap-2.5 my-1">
+<!-- Win 1 -->
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-white/5 backdrop-blur-md">
+<div class="flex items-center gap-2.5">
+<span class="w-7 h-7 rounded-full bg-secondary/40 text-secondary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px]">task_alt</span>
+</span>
+<span class="font-body-md text-inverse-on-surface font-medium">6 Tugas Selesai</span>
+</div>
+<span class="font-label-sm text-secondary-fixed">100% Target</span>
+</div>
+<!-- Win 2 -->
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-white/5 backdrop-blur-md">
+<div class="flex items-center gap-2.5">
+<span class="w-7 h-7 rounded-full bg-secondary/40 text-secondary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px]">savings</span>
+</span>
+<span class="font-body-md text-inverse-on-surface font-medium">Pengeluaran Terkontrol</span>
+</div>
+<span class="font-label-sm text-secondary-fixed">Rp 48k / Rp 65k</span>
+</div>
+<!-- Win 3 -->
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-white/5 backdrop-blur-md">
+<div class="flex items-center gap-2.5">
+<span class="w-7 h-7 rounded-full bg-secondary/40 text-secondary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px]">menu_book</span>
+</span>
+<span class="font-body-md text-inverse-on-surface font-medium">45 Menit Belajar Tuntas</span>
+</div>
+<span class="font-label-sm text-secondary-fixed">+120 XP Ritme</span>
+</div>
+</div>
+<!-- Calm Microcopy Affirmation -->
+<div class="pt-1 flex items-start gap-2 text-tertiary-fixed">
+<span class="material-symbols-outlined text-[18px] shrink-0 mt-0.5">bedtime</span>
+<p class="font-body-sm leading-relaxed text-secondary-fixed-dim">
+            “Istirahatlah, kamu sudah berprogres hebat hari ini. Pikiranmu siap untuk pulih.”
+          </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Adaptive Sensor & Glassmorphism Tuning Controls -->
+<div class="flex flex-col gap-3 p-card-padding rounded-2xl bg-surface-container/70 backdrop-blur-xl shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">sensors</span>
+<span class="font-headline-sm text-on-surface">Sensor Adaptif OS</span>
+</div>
+<!-- Toggle Switch -->
+<label aria-label="Toggle Sensor Konteks Otomatis" class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" id="autoSensorToggle" onchange="toggleSensor(this)" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary shadow-inner"></div>
+</label>
+</div>
+<p class="font-body-sm text-on-surface-variant">
+      Mendeteksi waktu matahari terbenam, agenda kalender belajar, dan ambient audio untuk beralih mode secara halus tanpa distraksi visual.
+    </p>
+<!-- Slider for Blur Intensity -->
+<div class="pt-2 flex flex-col gap-2">
+<div class="flex justify-between items-center">
+<span class="font-label-sm text-on-surface font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary">blur_linear</span>
+          Intensitas Blur Glassmorphism
+        </span>
+<span class="font-label-sm text-primary font-bold" id="blurValueLabel">20px (Optimal)</span>
+</div>
+<input class="w-full h-1.5 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary" id="blurSlider" max="40" min="4" oninput="adjustBlur(this.value)" type="range" value="20"/>
+<div class="flex justify-between text-outline font-label-sm text-[10px]">
+<span>Halus (4px)</span>
+<span>Standar (20px)</span>
+<span>Deep Frosted (40px)</span>
+</div>
+</div>
+</div>
+<!-- Micro Preview for Navigation Luminescence Response -->
+<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container-low/90 backdrop-blur-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary shadow-sm shadow-primary/30 transition-all duration-300" id="luminescenceIndicator">
+<span class="material-symbols-outlined text-[18px]">light_mode</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-on-surface">Luminositas Shell Bawah</span>
+<span class="font-body-sm text-outline" id="luminescenceStatus">Modulasi Lavender Soft Aktif</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline text-[18px]">verified</span>
+</div>
+</div>
+<!-- Client-side Micro-Interactions Script -->
+<script>
+  function switchMode(mode) {
+    const btnFocus = document.getElementById('btnFocus');
+    const btnNight = document.getElementById('btnNight');
+    const btnNormal = document.getElementById('btnNormal');
+    
+    const studyCard = document.getElementById('studyCard');
+    const focusOverlay = document.getElementById('focusOverlay');
+    const nightWinCard = document.getElementById('nightWinCard');
+    const luminescenceStatus = document.getElementById('luminescenceStatus');
+    const luminescenceIndicator = document.getElementById('luminescenceIndicator');
+
+    // Reset button appearances
+    [btnFocus, btnNight, btnNormal].forEach(btn => {
+      btn.className = "flex-1 py-2 px-2.5 rounded-full flex items-center justify-center gap-1.5 text-on-surface-variant hover:text-primary transition-all duration-300";
+    });
+
+    if (mode === 'focus') {
+      btnFocus.className = "flex-1 py-2 px-2.5 rounded-full flex items-center justify-center gap-1.5 bg-primary text-on-primary shadow-md transition-all duration-300";
+      
+      // Focus UI arrangement: Accentuate study, blur distractor
+      studyCard.style.opacity = "1";
+      studyCard.style.transform = "scale(1)";
+      studyCard.style.filter = "none";
+      focusOverlay.style.opacity = "1";
+      focusOverlay.style.pointerEvents = "auto";
+      
+      nightWinCard.style.transform = "scale(0.98)";
+      nightWinCard.style.opacity = "0.85";
+      
+      luminescenceStatus.innerText = "Modulasi Lavender Soft Aktif";
+      luminescenceIndicator.className = "w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-sm shadow-primary/40 transition-all duration-300";
+    } 
+    else if (mode === 'night') {
+      btnNight.className = "flex-1 py-2 px-2.5 rounded-full flex items-center justify-center gap-1.5 bg-secondary text-on-secondary shadow-md transition-all duration-300";
+      
+      // Night Mode arrangement: Elevate Daily Win Recap, soften academic pressure
+      nightWinCard.style.transform = "scale(1.02)";
+      nightWinCard.style.opacity = "1";
+      studyCard.style.opacity = "0.7";
+      studyCard.style.transform = "scale(0.98)";
+      
+      focusOverlay.style.opacity = "0";
+      focusOverlay.style.pointerEvents = "none";
+      
+      luminescenceStatus.innerText = "Lensa Midnight Amber Aktif";
+      luminescenceIndicator.className = "w-8 h-8 rounded-full bg-tertiary-container flex items-center justify-center text-on-primary shadow-sm shadow-secondary/40 transition-all duration-300";
+    } 
+    else if (mode === 'normal') {
+      btnNormal.className = "flex-1 py-2 px-2.5 rounded-full flex items-center justify-center gap-1.5 bg-surface-container-highest text-on-surface shadow-sm transition-all duration-300";
+      
+      // Normal: clear overlays, neutral weights
+      studyCard.style.opacity = "1";
+      studyCard.style.transform = "scale(1)";
+      focusOverlay.style.opacity = "0";
+      focusOverlay.style.pointerEvents = "none";
+      nightWinCard.style.opacity = "0.9";
+      nightWinCard.style.transform = "scale(1)";
+      
+      luminescenceStatus.innerText = "Pencahayaan Adaptif Standar";
+      luminescenceIndicator.className = "w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant transition-all duration-300";
+    }
+  }
+
+  function adjustBlur(value) {
+    const focusOverlay = document.getElementById('focusOverlay');
+    const label = document.getElementById('blurValueLabel');
+    if (focusOverlay) {
+      focusOverlay.style.backdropFilter = `blur(${value}px)`;
+      focusOverlay.style.webkitBackdropFilter = `blur(${value}px)`;
+    }
+    if (label) {
+      label.innerText = `${value}px (${value > 28 ? 'Deep Glass' : value > 14 ? 'Optimal' : 'Light'})`;
+    }
+  }
+
+  function toggleSensor(checkbox) {
+    const status = document.getElementById('luminescenceStatus');
+    if (!checkbox.checked) {
+      status.innerText = "Mode Manual Aktif (Sensor Non-Aktif)";
+    } else {
+      status.innerText = "Modulasi Otomatis Siap";
+    }
+  }
+</script></main><nav class="fixed bottom-4 inset-x-4 z-50 pb-safe" data-active-classes="text-primary font-medium"><div class="bg-white/70 backdrop-blur-2xl rounded-full px-2 py-2 flex justify-between items-center shadow-[0_8px_32px_rgba(104,76,224,0.14)] border border-white/50"><a aria-current="page" class="flex flex-col items-center justify-center min-w-[52px] h-12 transition-all rounded-full text-primary font-medium" data-path="home" href="#"><span class="material-symbols-outlined text-[22px]">home</span><span class="text-label-sm scale-90">Home</span></a><a class="flex flex-col items-center justify-center min-w-[52px] h-12 text-on-surface-variant hover:text-primary transition-all rounded-full" data-path="tasks" href="#"><span class="material-symbols-outlined text-[22px]">check_box</span><span class="text-label-sm scale-90">Tasks</span></a><div class="relative -top-5 px-1"><a class="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-tr from-primary-container via-secondary to-tertiary text-on-primary shadow-[0_8px_24px_rgba(108,76,224,0.42)] hover:scale-105 active:scale-95 transition-transform ring-4 ring-background" data-path="gemini-ai" href="#"><span class="material-symbols-outlined text-[28px]">auto_awesome</span></a></div><a class="flex flex-col items-center justify-center min-w-[52px] h-12 text-on-surface-variant hover:text-primary transition-all rounded-full" data-path="finance" href="#"><span class="material-symbols-outlined text-[22px]">account_balance_wallet</span><span class="text-label-sm scale-90">Finance</span></a><a class="flex flex-col items-center justify-center min-w-[52px] h-12 text-on-surface-variant hover:text-primary transition-all rounded-full" data-path="music-settings" href="#"><span class="material-symbols-outlined text-[22px]">headphones</span><span class="text-label-sm scale-90">Audio</span></a></div></nav></body></html>

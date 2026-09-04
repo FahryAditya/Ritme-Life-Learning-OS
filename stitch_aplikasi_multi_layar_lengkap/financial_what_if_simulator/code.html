@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#fbf8ff;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,16px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {"colors": {"on-primary-container": "#ebe4ff", "on-surface": "#1a1b22", "surface-container-highest": "#e3e1eb", "tertiary": "#534978", "outline-variant": "#cac4d7", "on-secondary-fixed-variant": "#4c2aad", "surface-bright": "#fbf8ff", "on-primary": "#ffffff", "inverse-surface": "#2f3037", "primary-fixed": "#e6deff", "surface-container-high": "#e9e7f1", "tertiary-fixed": "#e7deff", "on-primary-fixed-variant": "#4a21be", "on-background": "#1a1b22", "surface-container": "#eeedf7", "on-error": "#ffffff", "outline": "#797586", "secondary-fixed": "#e7deff", "surface-container-lowest": "#ffffff", "on-error-container": "#93000a", "inverse-primary": "#cbbeff", "tertiary-fixed-dim": "#ccbff6", "secondary-fixed-dim": "#ccbeff", "on-tertiary": "#ffffff", "surface-variant": "#e3e1eb", "surface-container-low": "#f4f2fc", "on-secondary-container": "#2e0085", "surface": "#fbf8ff", "secondary-container": "#987cfe", "surface-dim": "#dad9e3", "on-secondary-fixed": "#1f0060", "on-primary-fixed": "#1d0061", "on-tertiary-container": "#ece4ff", "background": "#fbf8ff", "surface-tint": "#6241d6", "on-surface-variant": "#484554", "tertiary-container": "#6b6192", "primary-fixed-dim": "#cbbeff", "error-container": "#ffdad6", "on-tertiary-fixed-variant": "#4a406f", "error": "#ba1a1a", "on-secondary": "#ffffff", "secondary": "#6446c6", "primary-container": "#6c4ce0", "inverse-on-surface": "#f1eff9", "primary": "#532ec7", "on-tertiary-fixed": "#1e1340"}, "borderRadius": {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"}, "spacing": {"gutter-md": "16px", "screen-margin": "20px", "gutter-lg": "24px", "gutter-sm": "8px", "card-padding": "20px", "radius-pill": "9999px"}, "fontFamily": {"body-lg": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "headline-xl": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"]}, "fontSize": {"body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}], "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}], "headline-md": ["22px", {"lineHeight": "28px", "fontWeight": "600"}], "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}], "label-sm": ["11px", {"lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "600"}], "headline-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}], "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}], "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "700"}], "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}]}}}};</script></head><body class="bg-background font-body-md text-on-surface flex flex-col min-h-screen relative overflow-x-hidden"><div class="absolute top-0 left-1/4 w-72 h-72 bg-primary-container/15 rounded-full blur-[80px] pointer-events-none -z-10"></div><div class="absolute top-1/3 right-[-10%] w-80 h-80 bg-secondary-container/15 rounded-full blur-[90px] pointer-events-none -z-10"></div><header class="fixed top-0 inset-x-0 z-50 bg-surface/75 backdrop-blur-xl pt-safe shadow-[0_4px_20px_rgba(108,76,224,0.04)]"><div class="h-16 px-screen-margin flex items-center justify-between"><div class="flex items-center gap-3"><img alt="Ritme Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLcAwk4Rc4RBV0thaXEntGI95gC4rFVGLTx6lBWkaKrcrSfHW-POLGKKIgyxxh20W3qAZOmPQP-LLWmNjVOkQCH0LdL12RTlMNFEw4XxgfSaHqiw9SoldV-ozmv4xbbXnSEtkzepzI1IIWZzOQPq1YjBUPazqq13wIYmZ_aW2MWSqtX28S0TmsPRKSI_UMNQ5yLLy0lZ2JqBBRpGsmZZrTja0eT54ebYlW7-zCUGAy5FPvpCiDQacI"/><span class="font-headline-md text-on-surface tracking-tight">Finance</span></div><div class="flex items-center gap-2.5"><button class="w-10 h-10 rounded-full flex items-center justify-center bg-white/60 backdrop-blur-md text-on-surface-variant hover:text-primary transition-colors shadow-sm"><span class="material-symbols-outlined text-[20px]">notifications</span></button><div class="w-9 h-9 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-on-primary shadow-sm ring-2 ring-primary-fixed/40"><span class="material-symbols-outlined text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full px-screen-margin pt-16 pb-28 bg-transparent flex-1"><div class="flex flex-col w-full gap-5 pb-6">
+<!-- Header Subtitle & Intro Context -->
+<div class="flex flex-col gap-1.5 pt-1">
+<div class="inline-flex items-center gap-2 self-start px-3 py-1 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm shadow-sm">
+<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">psychology</span>
+<span>Gemini Intelligence OS 3.2</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight flex items-center gap-2">
+      Simulator "What-If" <span class="inline-block transform hover:rotate-12 transition-transform cursor-pointer">🔮</span>
+</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">
+      Uji keputusan belanja &amp; dampak arus kas real-time sampai tanggal gajian.
+    </p>
+</div>
+<!-- Conversational Query Bubble Widget -->
+<div class="flex flex-col gap-3 p-card-padding rounded-lg bg-surface-container-lowest/80 backdrop-blur-xl shadow-[0_8px_30px_rgba(108,76,224,0.06)] relative overflow-hidden">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="flex h-2.5 w-2.5 rounded-full bg-secondary-container animate-ping"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Pertanyaan Finansial Aktif</span>
+</div>
+<button class="flex items-center gap-1 font-label-sm text-label-sm text-primary hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-[16px]">edit_note</span>
+<span>Ubah prompt</span>
+</button>
+</div>
+<!-- User Chat Bubble -->
+<div class="flex items-start gap-3 bg-surface-container-low/70 p-3.5 rounded-2xl">
+<div class="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-secondary flex-shrink-0 flex items-center justify-center text-on-primary shadow-sm text-label-sm font-label-md">
+        RA
+      </div>
+<div class="flex flex-col gap-1">
+<p class="font-body-md text-body-md text-on-surface italic leading-relaxed">
+          “Kalau aku beli monitor ultrawide baru seharga <strong class="text-primary font-semibold">Rp 2.000.000</strong> minggu ini, sisa uang makanku sampai gajian tanggal 28 cukup enggak?”
+        </p>
+<span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">schedule</span> Hari ini • 10:42 WIB
+        </span>
+</div>
+</div>
+</div>
+<!-- Gemini AI Verdict Card (Glassmorphic Purple Focus) -->
+<div class="relative overflow-hidden rounded-lg bg-gradient-to-br from-primary-container via-secondary to-tertiary-container text-on-primary p-card-padding shadow-[0_16px_36px_rgba(108,76,224,0.28)]">
+<!-- Ambient Inner Glow Ornament -->
+<div class="absolute -top-12 -right-12 w-44 h-44 bg-white/20 rounded-full blur-2xl pointer-events-none"></div>
+<div class="relative z-10 flex flex-col gap-4">
+<!-- Top Verdict Row -->
+<div class="flex items-center justify-between flex-wrap gap-2">
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-error-container text-on-error-container font-label-md text-label-md shadow-sm">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">warning</span>
+<span>⚠️ Peringatan Cashflow Ketat</span>
+</div>
+<div class="flex items-center gap-1 text-on-primary-container font-label-sm text-label-sm bg-white/15 backdrop-blur-md px-2.5 py-1 rounded-full">
+<span class="material-symbols-outlined text-[14px]">auto_awesome</span>
+<span>Analisis Gemini 98% Akurat</span>
+</div>
+</div>
+<!-- Verdict Metric Bento -->
+<div class="grid grid-cols-2 gap-2.5 pt-1">
+<div class="flex flex-col p-3 rounded-2xl bg-white/10 backdrop-blur-md">
+<span class="font-body-sm text-body-sm text-on-primary-container">Saldo Dompet Saat Ini</span>
+<span class="font-headline-sm text-headline-sm font-bold tracking-tight text-white mt-0.5">Rp 4.850.000</span>
+<span class="font-label-sm text-label-sm text-on-primary-container/80 mt-0.5">Liquid &amp; Siap Pakai</span>
+</div>
+<div class="flex flex-col p-3 rounded-2xl bg-white/15 backdrop-blur-md">
+<span class="font-body-sm text-body-sm text-on-primary-container">Setelah Pembelian</span>
+<span class="font-headline-sm text-headline-sm font-bold tracking-tight text-white mt-0.5">Rp 2.850.000</span>
+<span class="font-label-sm text-label-sm text-primary-fixed mt-0.5 flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]">trending_down</span> Terpotong 41%
+          </span>
+</div>
+</div>
+<!-- Safe to spend highlighted box -->
+<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container-lowest text-on-surface shadow-md">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">verified_user</span>
+            Safe to Spend Baru
+          </span>
+<span class="font-headline-md text-headline-md font-bold text-primary tracking-tight">
+            Rp 65.000 <span class="font-body-sm text-body-sm font-normal text-on-surface-variant">/ hari</span>
+</span>
+</div>
+<div class="text-right flex flex-col items-end">
+<span class="font-body-sm text-body-sm text-outline line-through">Rp 125.000 / hari</span>
+<span class="font-label-sm text-label-sm text-error bg-error-container px-2 py-0.5 rounded-full mt-0.5">
+            Turun -48%
+          </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-1">14 Hari ke Payday</span>
+</div>
+</div>
+<!-- Gemini AI Strategic Recommendation -->
+<div class="flex items-start gap-2.5 p-3 rounded-2xl bg-white/10 backdrop-blur-md">
+<span class="material-symbols-outlined text-[20px] text-primary-fixed-dim flex-shrink-0 mt-0.5" style="font-variation-settings: 'FILL' 1;">tips_and_updates</span>
+<div class="flex flex-col gap-1 text-white">
+<span class="font-label-md text-label-md text-primary-fixed font-bold">Rekomendasi Gemini AI</span>
+<p class="font-body-sm text-body-sm text-on-primary-container leading-relaxed">
+            Uang makanmu akan cukup jika kamu membatasi pesanan kopi luar dan makan siang di atas <strong class="text-white font-semibold">Rp 40.000/hari</strong>.
+          </p>
+<div class="mt-1 pt-2 border-t-0 border-none bg-white/5 p-2 rounded-xl">
+<p class="font-label-sm text-label-sm text-primary-fixed">
+              💡 Alternatif cerdas: Ambil opsi cicilan 0% 3 bulan (<strong class="text-white font-bold">Rp 667.000/bln</strong>) agar alokasi tabungan darurat tetap aman dan budget jajan tetap fleksibel.
+            </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Interactive What-If Parameter Sliders -->
+<div class="flex flex-col gap-4 p-card-padding rounded-lg bg-surface-container-lowest/80 backdrop-blur-xl shadow-[0_8px_30px_rgba(108,76,224,0.06)]">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">tune</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Parameter Simulasi</h2>
+</div>
+<button class="font-label-sm text-label-sm text-primary hover:opacity-80 flex items-center gap-1" id="resetSimBtn">
+<span class="material-symbols-outlined text-[14px]">refresh</span> Reset
+      </button>
+</div>
+<!-- Parameter 1: Nominal Belanja -->
+<div class="flex flex-col gap-2 bg-surface-container-low/60 p-3.5 rounded-2xl">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface" for="priceRange">Nominal Belanja</label>
+<span class="font-headline-sm text-headline-sm text-primary font-bold" id="priceDisplay">Rp 2.000.000</span>
+</div>
+<input class="w-full accent-primary cursor-pointer h-2 bg-surface-container-high rounded-full" id="priceRange" max="5000000" min="500000" step="100000" type="range" value="2000000"/>
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant px-0.5">
+<span>Rp 500rb</span>
+<span>Rp 2.5jt</span>
+<span>Rp 5jt</span>
+</div>
+</div>
+<!-- Parameter 2: Waktu Eksekusi -->
+<div class="flex flex-col gap-2 bg-surface-container-low/60 p-3.5 rounded-2xl">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface">Waktu Pembelian</span>
+<span class="font-label-sm text-label-sm px-2.5 py-0.5 rounded-full bg-secondary text-on-secondary font-medium" id="timeDisplayTag">Minggu Ini (H+2)</span>
+</div>
+<div class="grid grid-cols-3 gap-2 pt-1">
+<button class="timing-btn py-2 px-2 rounded-xl font-label-sm text-label-sm text-on-surface bg-surface hover:bg-primary-fixed transition-colors text-center" data-val="Besok">
+          Besok
+        </button>
+<button class="timing-btn py-2 px-2 rounded-xl font-label-sm text-label-sm text-on-primary bg-primary shadow-sm text-center font-bold" data-val="Minggu Ini (H+2)">
+          Akhir Pekan
+        </button>
+<button class="timing-btn py-2 px-2 rounded-xl font-label-sm text-label-sm text-on-surface bg-surface hover:bg-primary-fixed transition-colors text-center" data-val="Pasca Gajian">
+          Tunggu Gajian
+        </button>
+</div>
+</div>
+<!-- Visual Cashflow Comparison Chart (Inline SVG) -->
+<div class="flex flex-col gap-2 pt-1">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface">Proyeksi Saldo (14 Hari ke Depan)</span>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary-container"></span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Baseline</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-2.5 h-2.5 rounded-full bg-error"></span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Skenario Beli</span>
+</div>
+</div>
+</div>
+<!-- Projection Graph Container -->
+<div class="p-3 bg-surface-container-low/50 rounded-2xl relative overflow-hidden">
+<svg class="w-full h-36" fill="none" viewbox="0 0 340 130" xmlns="http://www.w3.org/2000/svg">
+<!-- Background Grids -->
+<line opacity="0.4" stroke="#CAC4D7" stroke-dasharray="3 3" x1="0" x2="340" y1="20" y2="20"></line>
+<line opacity="0.4" stroke="#CAC4D7" stroke-dasharray="3 3" x1="0" x2="340" y1="65" y2="65"></line>
+<line opacity="0.4" stroke="#CAC4D7" stroke-dasharray="3 3" x1="0" x2="340" y1="110" y2="110"></line>
+<!-- Scenario A: Tanpa Beli (Sustained safe trajectory) -->
+<path d="M 10 30 Q 90 40 170 55 T 330 78" fill="none" stroke="#987CFE" stroke-linecap="round" stroke-width="3"></path>
+<circle cx="330" cy="78" fill="#6446C6" r="4"></circle>
+<!-- Scenario B: Setelah Beli Monitor (Sharp dip on day 2, then lower trajectory) -->
+<path d="M 10 30 L 45 35 L 55 85 Q 180 98 330 115" fill="none" id="scenarioPath" stroke="#BA1A1A" stroke-linecap="round" stroke-width="3"></path>
+<circle cx="55" cy="85" fill="#BA1A1A" r="4"></circle>
+<circle cx="330" cy="115" fill="#BA1A1A" r="4"></circle>
+<!-- Safe Buffer Threshold Band -->
+<rect fill="#FFDAD6" height="18" opacity="0.45" width="340" x="0" y="112"></rect>
+<text class="text-[9px] font-semibold tracking-wider uppercase font-body-sm" fill="#BA1A1A" x="210" y="124">Batas Dana Darurat</text>
+<!-- Key Milestones -->
+<text class="text-[10px] font-body-sm" fill="#797586" x="10" y="15">H-14 (Hari ini)</text>
+<text class="text-[10px] font-bold font-body-sm" fill="#BA1A1A" x="50" y="100">Beli (-2jt)</text>
+<text class="text-[10px] font-body-sm" fill="#797586" x="278" y="15">H-0 (Gajian)</text>
+</svg>
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm pt-1">
+<span class="flex items-center gap-1 text-secondary font-semibold">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Sisa Baseline: Rp 2.9jt
+          </span>
+<span class="flex items-center gap-1 text-error font-semibold">
+<span class="material-symbols-outlined text-[14px]">error</span> Sisa Skenario: Rp 910rb
+          </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Real-Time Context Visualizer Card (Visual Richness Image Integration) -->
+<div class="flex flex-col rounded-lg overflow-hidden bg-surface-container-lowest/80 backdrop-blur-xl shadow-[0_8px_30px_rgba(108,76,224,0.06)]">
+<div class="relative w-full h-32 bg-cover bg-center" data-alt="Futuristic clean minimal aesthetic home office workspace setup with an ultrawide curved monitor glowing softly with purple violet backlighting, soft ambient lavender tones, high-tech workspace atmosphere." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAmEvwIxjwYAxJ-pRdiImX6uMPwyBHql-EAymDYlBpvGGJSe5rWCc-5kwKxUYIhn8Arl02emo8FKdX0Xc9I3Y-5y3IRXUyw8w0Si0i3R3uTo-nMrCpeKwUjabjm3cO01fUoHWvpQqMH58mGmXEnuk1F7lCzpmA7CPDg4qdNaZK8cXcPx9hqty6lYaC1FrCQTUav_GD5yaYys_tv9KhzVrtzsze67s3pKv2nfZkohN1m8YTqZjN6Zp_d')">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/40 to-transparent"></div>
+<div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-inverse-surface/80 text-inverse-on-surface font-label-sm text-label-sm backdrop-blur-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">devices</span> Item Target: Monitor Ultrawide 34"
+      </div>
+</div>
+<div class="p-card-padding -mt-3 relative z-10 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Protokol Penghematan Gemini</h3>
+<span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-bold">14 Hari</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+        Jika simulasi ini dijalankan, Ritme OS akan mengaktifkan aturan anggaran cerdas secara otomatis pada modul Keuangan.
+      </p>
+<!-- Checklist preview -->
+<div class="flex flex-col gap-2 pt-1">
+<div class="flex items-center gap-2.5 p-2 rounded-xl bg-surface-container-low">
+<span class="material-symbols-outlined text-primary text-[18px]">local_cafe</span>
+<span class="font-body-sm text-body-sm text-on-surface flex-1">Auto-cap jajan kopi maksimal Rp 20.000/hari</span>
+<span class="material-symbols-outlined text-outline text-[18px]">lock</span>
+</div>
+<div class="flex items-center gap-2.5 p-2 rounded-xl bg-surface-container-low">
+<span class="material-symbols-outlined text-primary text-[18px]">fastfood</span>
+<span class="font-body-sm text-body-sm text-on-surface flex-1">Beralih ke paket makan siang hemat kantor</span>
+<span class="material-symbols-outlined text-outline text-[18px]">lock</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Primary & Secondary Action CTAs -->
+<div class="flex flex-col gap-2.5 pt-1">
+<button class="w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-primary to-secondary text-on-primary font-label-md text-label-md shadow-[0_8px_20px_rgba(108,76,224,0.35)] active:scale-[0.98] transition-transform flex items-center justify-center gap-2" id="applyPlanBtn">
+<span class="material-symbols-outlined text-[18px]">shield</span>
+<span>Terapkan Rencana Hemat 14 Hari</span>
+</button>
+<div class="grid grid-cols-2 gap-2.5">
+<button class="py-3 px-4 rounded-full bg-surface-container-high text-on-surface font-label-md text-label-md hover:bg-surface-container-highest active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">bookmark_add</span>
+<span>Simpan Simulasi</span>
+</button>
+<button class="py-3 px-4 rounded-full bg-primary-fixed text-on-primary-fixed font-label-md text-label-md hover:bg-primary-fixed-dim active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">chat</span>
+<span>Tanya Gemini Lagi</span>
+</button>
+</div>
+</div>
+<!-- Quick Context Toast Notification Helper (Hidden initially) -->
+<div class="fixed bottom-24 left-1/2 -translate-x-1/2 z-40 hidden bg-inverse-surface text-inverse-on-surface font-label-md text-label-md px-4 py-2.5 rounded-full shadow-2xl items-center gap-2 transition-all" id="toastNotification">
+<span class="material-symbols-outlined text-primary-fixed-dim text-[18px]">task_alt</span>
+<span id="toastMessage">Rencana hemat 14 hari aktif di modul Keuangan.</span>
+</div>
+</div>
+<script>
+  (function initFinancialSimulator() {
+    const slider = document.getElementById('priceRange');
+    const priceDisplay = document.getElementById('priceDisplay');
+    const timeButtons = document.querySelectorAll('.timing-btn');
+    const timeDisplayTag = document.getElementById('timeDisplayTag');
+    const applyBtn = document.getElementById('applyPlanBtn');
+    const toast = document.getElementById('toastNotification');
+    const toastMsg = document.getElementById('toastMessage');
+
+    // Dynamic slider formatter
+    if (slider && priceDisplay) {
+      slider.addEventListener('input', (e) => {
+        const val = parseInt(e.target.value, 10);
+        priceDisplay.textContent = 'Rp ' + val.toLocaleString('id-ID');
+      });
+    }
+
+    // Toggle timing pills
+    timeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        timeButtons.forEach(b => {
+          b.className = 'timing-btn py-2 px-2 rounded-xl font-label-sm text-label-sm text-on-surface bg-surface hover:bg-primary-fixed transition-colors text-center';
+        });
+        btn.className = 'timing-btn py-2 px-2 rounded-xl font-label-sm text-label-sm text-on-primary bg-primary shadow-sm text-center font-bold';
+        if (timeDisplayTag) {
+          timeDisplayTag.textContent = btn.getAttribute('data-val');
+        }
+      });
+    });
+
+    // Interactive Toast Feedback
+    if (applyBtn && toast) {
+      applyBtn.addEventListener('click', () => {
+        toast.classList.remove('hidden');
+        toast.classList.add('flex');
+        setTimeout(() => {
+          toast.classList.add('hidden');
+          toast.classList.remove('flex');
+        }, 3000);
+      });
+    }
+
+    // Reset button
+    const resetBtn = document.getElementById('resetSimBtn');
+    if (resetBtn && slider) {
+      resetBtn.addEventListener('click', () => {
+        slider.value = 2000000;
+        priceDisplay.textContent = 'Rp 2.000.000';
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-4 inset-x-4 z-50 pb-safe" data-active-classes="text-primary font-medium"><div class="bg-white/70 backdrop-blur-2xl rounded-full px-2 py-2 flex justify-between items-center shadow-[0_8px_32px_rgba(104,76,224,0.14)] border border-white/50"><a class="flex flex-col items-center justify-center min-w-[52px] h-12 text-on-surface-variant hover:text-primary transition-all rounded-full" data-path="home" href="#"><span class="material-symbols-outlined text-[22px]">home</span><span class="text-label-sm scale-90">Home</span></a><a class="flex flex-col items-center justify-center min-w-[52px] h-12 text-on-surface-variant hover:text-primary transition-all rounded-full" data-path="tasks" href="#"><span class="material-symbols-outlined text-[22px]">check_box</span><span class="text-label-sm scale-90">Tasks</span></a><div class="relative -top-5 px-1"><a class="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-tr from-primary-container via-secondary to-tertiary text-on-primary shadow-[0_8px_24px_rgba(108,76,224,0.42)] hover:scale-105 active:scale-95 transition-transform ring-4 ring-background" data-path="gemini-ai" href="#"><span class="material-symbols-outlined text-[28px]">auto_awesome</span></a></div><a aria-current="page" class="flex flex-col items-center justify-center min-w-[52px] h-12 transition-all rounded-full text-primary font-medium" data-path="finance" href="#"><span class="material-symbols-outlined text-[22px]">account_balance_wallet</span><span class="text-label-sm scale-90">Finance</span></a><a class="flex flex-col items-center justify-center min-w-[52px] h-12 text-on-surface-variant hover:text-primary transition-all rounded-full" data-path="music-settings" href="#"><span class="material-symbols-outlined text-[22px]">headphones</span><span class="text-label-sm scale-90">Audio</span></a></div></nav></body></html>
