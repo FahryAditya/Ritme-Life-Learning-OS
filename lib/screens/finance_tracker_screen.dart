@@ -44,8 +44,13 @@ class _FinanceTrackerScreenState extends State<FinanceTrackerScreen> {
   }
 
   Future<void> _loadFinanceData() async {
-    final balance = await DatabaseHelper.instance.calculateTotalBalance();
-    final list = await DatabaseHelper.instance.getTransactions();
+    final results = await Future.wait([
+      DatabaseHelper.instance.calculateTotalBalance(),
+      DatabaseHelper.instance.getTransactions(),
+    ]);
+
+    final balance = results[0] as double;
+    final list = results[1] as List<TransactionModel>;
 
     double income = 0.0;
     double expense = 0.0;
@@ -60,19 +65,27 @@ class _FinanceTrackerScreenState extends State<FinanceTrackerScreen> {
       }
     }
 
-    final health = await GeminiService.instance.calculateFinancialHealthScore(income, expense, balance);
-
     if (mounted) {
       setState(() {
         _balance = balance;
         _totalIncome = income;
         _totalExpense = expense;
         _categoryExpenses = catMap;
-        _healthScoreData = health;
         _transactions = list;
         _isLoading = false;
       });
     }
+
+    // Load AI financial health score asynchronously in background
+    GeminiService.instance
+        .calculateFinancialHealthScore(income, expense, balance)
+        .then((health) {
+      if (mounted) {
+        setState(() {
+          _healthScoreData = health;
+        });
+      }
+    });
   }
 
   void _showAddTransactionDialog() {

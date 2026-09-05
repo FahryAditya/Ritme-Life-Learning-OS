@@ -47,12 +47,19 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
   }
 
   Future<void> _loadDashboardData() async {
-    final balance = await DatabaseHelper.instance.calculateTotalBalance();
-    final tasks = await DatabaseHelper.instance.getTasks(onlyIncomplete: true);
-    final active = await DatabaseHelper.instance.getActiveTask();
-    final txs = await DatabaseHelper.instance.getTransactions();
-    final habits = await DatabaseHelper.instance.getHabits();
-    final burnout = await GeminiService.instance.generateBurnoutRadar(tasks);
+    final results = await Future.wait([
+      DatabaseHelper.instance.calculateTotalBalance(),
+      DatabaseHelper.instance.getTasks(onlyIncomplete: true),
+      DatabaseHelper.instance.getActiveTask(),
+      DatabaseHelper.instance.getTransactions(),
+      DatabaseHelper.instance.getHabits(),
+    ]);
+
+    final balance = results[0] as double;
+    final tasks = results[1] as List<TaskModel>;
+    final active = results[2] as TaskModel?;
+    final txs = results[3] as List<TransactionModel>;
+    final habits = results[4] as List<HabitModel>;
 
     if (mounted) {
       setState(() {
@@ -61,10 +68,18 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
         _activeTask = active ?? (tasks.isNotEmpty ? tasks.first : null);
         _recentTxs = txs.take(3).toList();
         _habits = habits;
-        _burnoutRadar = burnout;
         _isLoading = false;
       });
     }
+
+    // Load AI burnout radar asynchronously in background
+    GeminiService.instance.generateBurnoutRadar(tasks).then((burnout) {
+      if (mounted) {
+        setState(() {
+          _burnoutRadar = burnout;
+        });
+      }
+    });
   }
 
   String _formatRupiah(double amount) {

@@ -57,7 +57,13 @@ class NeonDatabaseHelper {
     return 5432;
   }
 
+  bool _isNeonDisabledSession = false;
+
   Future<Connection> getConnection() async {
+    if (_isNeonDisabledSession) {
+      throw Exception('Neon DB disabled for session due to fast timeout');
+    }
+
     if (_connection != null && _connection!.isOpen) {
       return _connection!;
     }
@@ -70,19 +76,24 @@ class NeonDatabaseHelper {
       port: _port,
     );
 
-    _connection = await Connection.open(
-      endpoint,
-      settings: const ConnectionSettings(
-        sslMode: SslMode.require,
-      ),
-    );
+    try {
+      _connection = await Connection.open(
+        endpoint,
+        settings: const ConnectionSettings(
+          sslMode: SslMode.require,
+        ),
+      ).timeout(const Duration(milliseconds: 800));
 
-    if (!_isTableInitialized) {
-      await _initSchema(_connection!);
-      _isTableInitialized = true;
+      if (!_isTableInitialized) {
+        await _initSchema(_connection!).timeout(const Duration(milliseconds: 800));
+        _isTableInitialized = true;
+      }
+
+      return _connection!;
+    } catch (e) {
+      _isNeonDisabledSession = true;
+      throw Exception('Neon DB connection timeout or error: $e');
     }
-
-    return _connection!;
   }
 
   Future<void> _initSchema(Connection conn) async {

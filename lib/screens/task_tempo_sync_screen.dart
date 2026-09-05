@@ -85,10 +85,17 @@ class _TaskTempoSyncScreenState extends State<TaskTempoSyncScreen>
   }
 
   Future<void> _loadDataFromDb() async {
-    final active = await DatabaseHelper.instance.getActiveTask();
-    final allTasks = await DatabaseHelper.instance.getTasks();
-    final weeklyMins = await DatabaseHelper.instance.getWeeklyFocusMinutes();
-    final totalMins = await DatabaseHelper.instance.getTotalFocusMinutesThisWeek();
+    final results = await Future.wait([
+      DatabaseHelper.instance.getActiveTask(),
+      DatabaseHelper.instance.getTasks(),
+      DatabaseHelper.instance.getWeeklyFocusMinutes(),
+      DatabaseHelper.instance.getTotalFocusMinutesThisWeek(),
+    ]);
+
+    final active = results[0] as TaskModel?;
+    final allTasks = results[1] as List<TaskModel>;
+    final weeklyMins = results[2] as List<int>;
+    final totalMins = results[3] as int;
 
     if (mounted) {
       setState(() {
