@@ -31,10 +31,10 @@ class _GeminiAssistantScreenState extends State<GeminiAssistantScreen>
   ];
 
   final List<String> _suggestedPrompts = [
-    '✨ Ringkas hariku',
-    '💸 Cek radar pengeluaran impulsif',
-    '🎵 Sesuaikan tempo tugas berikutnya',
-    '📚 Kuis materi audio pod',
+    'Ringkas hariku',
+    'Cek radar pengeluaran impulsif',
+    'Sesuaikan tempo tugas berikutnya',
+    'Kuis materi transkripsi suara',
   ];
 
   @override
@@ -378,7 +378,7 @@ class _GeminiAssistantScreenState extends State<GeminiAssistantScreen>
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'API Key belum diisi. Sentuh ikon kunci 🔑 untuk aktivasi.',
+                        'API Key belum diisi. Sentuh ikon kunci di atas untuk aktivasi.',
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
                               color: AppColors.onPrimaryFixed,
                               fontWeight: FontWeight.w600,

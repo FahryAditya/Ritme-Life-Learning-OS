@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../database/database_helper.dart';
 import '../models/transaction_model.dart';
+import '../services/gemini_service.dart';
 import '../services/ritme_data_notifier.dart';
 import '../theme/app_theme.dart';
 import '../widgets/glass_card.dart';
+import '../widgets/donut_chart_widget.dart';
 
 class FinanceTrackerScreen extends StatefulWidget {
   const FinanceTrackerScreen({super.key});
@@ -15,6 +17,11 @@ class FinanceTrackerScreen extends StatefulWidget {
 
 class _FinanceTrackerScreenState extends State<FinanceTrackerScreen> {
   double _balance = 0.0;
+  // ignore: unused_field
+  double _totalIncome = 0.0;
+  double _totalExpense = 0.0;
+  Map<String, double> _categoryExpenses = {};
+  Map<String, dynamic>? _healthScoreData;
   List<TransactionModel> _transactions = [];
   bool _isLoading = true;
   String _filterType = 'Semua'; // 'Semua', 'Pengeluaran', 'Pemasukan'
@@ -40,9 +47,28 @@ class _FinanceTrackerScreenState extends State<FinanceTrackerScreen> {
     final balance = await DatabaseHelper.instance.calculateTotalBalance();
     final list = await DatabaseHelper.instance.getTransactions();
 
+    double income = 0.0;
+    double expense = 0.0;
+    final catMap = <String, double>{};
+
+    for (var tx in list) {
+      if (tx.isExpense) {
+        expense += tx.amount;
+        catMap[tx.category] = (catMap[tx.category] ?? 0.0) + tx.amount;
+      } else {
+        income += tx.amount;
+      }
+    }
+
+    final health = await GeminiService.instance.calculateFinancialHealthScore(income, expense, balance);
+
     if (mounted) {
       setState(() {
         _balance = balance;
+        _totalIncome = income;
+        _totalExpense = expense;
+        _categoryExpenses = catMap;
+        _healthScoreData = health;
         _transactions = list;
         _isLoading = false;
       });
@@ -143,6 +169,42 @@ class _FinanceTrackerScreenState extends State<FinanceTrackerScreen> {
                     final amount = double.tryParse(amountController.text.trim()) ?? 0;
                     if (title.isEmpty || amount <= 0) return;
 
+                    if (isExpense) {
+                      final impulsiveCheck = await GeminiService.instance.analyzeImpulsivePurchase(title, amount, _balance);
+                      if (impulsiveCheck['isImpulsive'] == true && ctx.mounted) {
+                        final shouldProceed = await showDialog<bool>(
+                          context: ctx,
+                          builder: (warnCtx) => AlertDialog(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                            title: const Row(
+                              children: [
+                                Icon(Icons.shield_outlined, color: Colors.orange),
+                                SizedBox(width: 8),
+                                Text('Impulsive Buying Shield', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                              ],
+                            ),
+                            content: Text(
+                              impulsiveCheck['warning'] as String,
+                              style: const TextStyle(fontSize: 13, height: 1.35),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(warnCtx, false),
+                                child: const Text('Tunda (Jeda 24 Jam)', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+                              ),
+                              ElevatedButton(
+                                onPressed: () => Navigator.pop(warnCtx, true),
+                                style: ElevatedButton.styleFrom(backgroundColor: Colors.orange, foregroundColor: Colors.white),
+                                child: const Text('Tetap Catat'),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (shouldProceed != true) return;
+                      }
+                    }
+
                     final tx = TransactionModel(
                       title: title,
                       amount: amount,
@@ -202,6 +264,77 @@ class _FinanceTrackerScreenState extends State<FinanceTrackerScreen> {
       RitmeDataNotifier.instance.notifyDataChanged();
       _loadFinanceData();
     }
+  }
+
+  void _showQuickAiEntryDialog() {
+    final aiController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          title: const Row(
+            children: [
+              Icon(Icons.auto_awesome, color: AppColors.primary),
+              SizedBox(width: 8),
+              Text('Input Cepat AI Bahasa Alami', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Ketik atau ucapkan kalimat santai, AI akan otomatis mencatatnya:',
+                style: TextStyle(fontSize: 12, color: AppColors.onSurfaceVariant),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: aiController,
+                decoration: InputDecoration(
+                  hintText: 'Misal: "Beli kopi 25rb" atau "Saldo awal 5jt"',
+                  hintStyle: const TextStyle(fontSize: 12),
+                  filled: true,
+                  fillColor: AppColors.surfaceContainerLow,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Batal'),
+            ),
+            ElevatedButton.icon(
+              onPressed: () async {
+                final text = aiController.text.trim();
+                if (text.isEmpty) return;
+                Navigator.pop(ctx);
+                final res = await GeminiService.instance.sendMessage(text);
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(res.length > 80 ? '${res.substring(0, 80)}...' : res),
+                      backgroundColor: AppColors.primary,
+                    ),
+                  );
+                  _loadFinanceData();
+                }
+              },
+              icon: const Icon(Icons.send, size: 16, color: Colors.white),
+              label: const Text('Proses AI'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   String _formatRupiah(double amount) {
@@ -266,10 +399,19 @@ class _FinanceTrackerScreenState extends State<FinanceTrackerScreen> {
                       ),
                     ],
                   ),
-                  IconButton(
-                    onPressed: _showAddTransactionDialog,
-                    icon: const Icon(Icons.add_circle, color: AppColors.primary, size: 32),
-                    tooltip: 'Catat Transaksi',
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: _showQuickAiEntryDialog,
+                        icon: const Icon(Icons.auto_awesome, color: AppColors.primary, size: 28),
+                        tooltip: 'Input Cepat AI Bahasa Alami',
+                      ),
+                      IconButton(
+                        onPressed: _showAddTransactionDialog,
+                        icon: const Icon(Icons.add_circle, color: AppColors.primary, size: 32),
+                        tooltip: 'Catat Transaksi',
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -351,6 +493,184 @@ class _FinanceTrackerScreenState extends State<FinanceTrackerScreen> {
                   ],
                 ),
               ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.06, end: 0),
+              const SizedBox(height: 16),
+
+              // AI Financial Health Score Card
+              if (_healthScoreData != null) ...[
+                GlassCard(
+                  borderRadius: 22,
+                  padding: const EdgeInsets.all(18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Row(
+                            children: [
+                              Icon(Icons.health_and_safety, color: AppColors.primary, size: 20),
+                              SizedBox(width: 8),
+                              Text(
+                                'Kesehatan Keuangan AI',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryFixed,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              '${_healthScoreData!['score']} / 100 • ${_healthScoreData!['badge']}',
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.onPrimaryFixed,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: LinearProgressIndicator(
+                          value: ((_healthScoreData!['score'] as int) / 100).clamp(0.0, 1.0),
+                          minHeight: 8,
+                          backgroundColor: AppColors.surfaceContainerHigh,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            (_healthScoreData!['score'] as int) >= 75
+                                ? Colors.green
+                                : ((_healthScoreData!['score'] as int) >= 50 ? Colors.orange : Colors.red),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        _healthScoreData!['advice'] as String,
+                        style: const TextStyle(fontSize: 12, color: AppColors.onSurfaceVariant, height: 1.3),
+                      ),
+                    ],
+                  ),
+                ).animate().fadeIn(duration: 400.ms),
+                const SizedBox(height: 16),
+              ],
+
+              // Donut Chart — Pengeluaran per Kategori
+              if (_categoryExpenses.isNotEmpty) ...[
+                GlassCard(
+                  borderRadius: 22,
+                  padding: const EdgeInsets.all(18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(Icons.donut_large_outlined, color: AppColors.primary, size: 20),
+                          SizedBox(width: 8),
+                          Text(
+                            'Distribusi Pengeluaran',
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Tap irisan untuk detail kategori',
+                        style: TextStyle(fontSize: 11, color: AppColors.onSurfaceVariant),
+                      ),
+                      const SizedBox(height: 16),
+                      DonutChartWidget(
+                        categoryData: _categoryExpenses,
+                        total: _totalExpense,
+                      ),
+                    ],
+                  ),
+                ).animate().fadeIn(duration: 400.ms),
+                const SizedBox(height: 16),
+              ],
+
+              // Category Budget Limit Progress Meters
+              GlassCard(
+                borderRadius: 22,
+                padding: const EdgeInsets.all(18),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Batas Anggaran Kategori',
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const Text(
+                          'Batas 80% Warning',
+                          style: TextStyle(fontSize: 11, color: AppColors.onSurfaceVariant),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+
+                    ...[
+                      {'name': 'Makanan & Minuman', 'limit': 1500000.0, 'icon': Icons.fastfood_outlined},
+                      {'name': 'Transportasi', 'limit': 600000.0, 'icon': Icons.directions_car_outlined},
+                      {'name': 'Hiburan & Belanja', 'limit': 1000000.0, 'icon': Icons.shopping_bag_outlined},
+                    ].map((cat) {
+                      final spent = _categoryExpenses[cat['name']] ?? 0.0;
+                      final limit = cat['limit'] as double;
+                      final ratio = (spent / limit).clamp(0.0, 1.0);
+                      final isOver80 = ratio >= 0.8;
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(cat['icon'] as IconData, size: 16, color: AppColors.primary),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      cat['name'] as String,
+                                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  'Rp ${_formatRupiah(spent)} / Rp ${_formatRupiah(limit)}',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: isOver80 ? FontWeight.bold : FontWeight.normal,
+                                    color: isOver80 ? Colors.red : AppColors.onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(6),
+                              child: LinearProgressIndicator(
+                                value: ratio,
+                                minHeight: 6,
+                                backgroundColor: AppColors.surfaceContainerHigh,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  ratio >= 1.0 ? Colors.red : (isOver80 ? Colors.orange : AppColors.primary),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              ).animate().fadeIn(duration: 400.ms),
               const SizedBox(height: 20),
 
               // Impulsive Spending Radar (AI Delight feature)

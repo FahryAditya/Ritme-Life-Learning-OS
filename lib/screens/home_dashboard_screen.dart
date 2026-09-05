@@ -3,9 +3,13 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../database/database_helper.dart';
 import '../models/task_model.dart';
 import '../models/transaction_model.dart';
+import '../models/habit_model.dart';
+import '../services/gemini_service.dart';
 import '../services/ritme_data_notifier.dart';
 import '../theme/app_theme.dart';
 import '../widgets/glass_card.dart';
+import 'habit_calendar_screen.dart';
+import 'reflection_journal_screen.dart';
 
 class HomeDashboardScreen extends StatefulWidget {
   final Function(int)? onNavigateTab;
@@ -21,6 +25,8 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
   int _pendingTasksCount = 0;
   TaskModel? _activeTask;
   List<TransactionModel> _recentTxs = [];
+  List<HabitModel> _habits = [];
+  Map<String, dynamic>? _burnoutRadar;
   bool _isLoading = true;
 
   @override
@@ -45,6 +51,8 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
     final tasks = await DatabaseHelper.instance.getTasks(onlyIncomplete: true);
     final active = await DatabaseHelper.instance.getActiveTask();
     final txs = await DatabaseHelper.instance.getTransactions();
+    final habits = await DatabaseHelper.instance.getHabits();
+    final burnout = await GeminiService.instance.generateBurnoutRadar(tasks);
 
     if (mounted) {
       setState(() {
@@ -52,6 +60,8 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
         _pendingTasksCount = tasks.length;
         _activeTask = active ?? (tasks.isNotEmpty ? tasks.first : null);
         _recentTxs = txs.take(3).toList();
+        _habits = habits;
+        _burnoutRadar = burnout;
         _isLoading = false;
       });
     }
@@ -118,7 +128,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Hello, Creative! 👋',
+                        'Hello, Creative!',
                         style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                               fontWeight: FontWeight.w700,
                               color: AppColors.onSurface,
@@ -349,6 +359,207 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
               ).animate().fadeIn(delay: 240.ms, duration: 400.ms).slideY(begin: 0.08, end: 0),
               const SizedBox(height: 24),
 
+              // AI Burnout Radar Card
+              if (_burnoutRadar != null) ...[
+                GlassCard(
+                  borderRadius: 20,
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.speed, color: AppColors.primary, size: 18),
+                              const SizedBox(width: 6),
+                              Text(
+                                'Radar Burnout & Kognitif AI',
+                                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: (_burnoutRadar!['riskLevel'] == 'Tinggi'
+                                      ? Colors.red.shade100
+                                      : (_burnoutRadar!['riskLevel'] == 'Sedang'
+                                          ? Colors.orange.shade100
+                                          : Colors.green.shade100)),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              'Risiko ${_burnoutRadar!['riskLevel']}',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: (_burnoutRadar!['riskLevel'] == 'Tinggi'
+                                    ? Colors.red.shade900
+                                    : (_burnoutRadar!['riskLevel'] == 'Sedang'
+                                        ? Colors.orange.shade900
+                                        : Colors.green.shade900)),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Progress Bar
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: LinearProgressIndicator(
+                          value: ((_burnoutRadar!['riskScore'] as int) / 100).clamp(0.0, 1.0),
+                          minHeight: 8,
+                          backgroundColor: AppColors.surfaceContainerHigh,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            _burnoutRadar!['riskLevel'] == 'Tinggi'
+                                ? Colors.red
+                                : (_burnoutRadar!['riskLevel'] == 'Sedang'
+                                    ? Colors.orange
+                                    : Colors.green),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+
+                      Text(
+                        _burnoutRadar!['recommendation'] as String,
+                        style: const TextStyle(fontSize: 12, color: AppColors.onSurfaceVariant, height: 1.3),
+                      ),
+                    ],
+                  ),
+                ).animate().fadeIn(duration: 400.ms),
+                const SizedBox(height: 20),
+              ],
+
+              // Ritme Habit Tracker Carousel
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Habit Tracker & Daily Streaks',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        '${_habits.where((h) => h.isCompletedToday).length}/${_habits.length} Selesai',
+                        style: const TextStyle(fontSize: 12, color: AppColors.onSurfaceVariant),
+                      ),
+                      const SizedBox(width: 4),
+                      GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const HabitCalendarScreen()),
+                        ),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryFixed,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Row(
+                            children: [
+                              Icon(Icons.grid_view_rounded, size: 12, color: AppColors.primary),
+                              SizedBox(width: 3),
+                              Text(
+                                'Kalender',
+                                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.primary),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: _habits.map((habit) {
+                    return Container(
+                      width: 170,
+                      margin: const EdgeInsets.only(right: 12),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: habit.isCompletedToday ? AppColors.primaryContainer.withValues(alpha: 0.25) : Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: habit.isCompletedToday ? AppColors.primary : AppColors.surfaceContainerHigh,
+                          width: habit.isCompletedToday ? 1.5 : 1.0,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: Colors.orange.shade50,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.whatshot, size: 12, color: Colors.deepOrange),
+                                    const SizedBox(width: 2),
+                                    Text(
+                                      '${habit.streakCount} Hari',
+                                      style: const TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.deepOrange,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () async {
+                                  await DatabaseHelper.instance.toggleHabitCompletion(habit);
+                                  RitmeDataNotifier.instance.notifyDataChanged();
+                                },
+                                borderRadius: BorderRadius.circular(12),
+                                child: Icon(
+                                  habit.isCompletedToday ? Icons.check_circle : Icons.radio_button_unchecked,
+                                  color: habit.isCompletedToday ? AppColors.primary : AppColors.onSurfaceVariant,
+                                  size: 22,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+
+                          Text(
+                            habit.title,
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            habit.category,
+                            style: const TextStyle(fontSize: 10, color: AppColors.onSurfaceVariant),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+              const SizedBox(height: 24),
+
               // Module Quick-Access Row
               Text(
                 'Modul Ritme',
@@ -392,13 +603,39 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                     ),
                     const SizedBox(width: 12),
                     _buildModuleCard(
-                      icon: Icons.menu_book,
-                      title: 'Study Pod',
-                      subtitle: 'Audio Notes',
+                      icon: Icons.mic_none_outlined,
+                      title: 'Voice AI',
+                      subtitle: 'Voice to Text',
                       gradient: const LinearGradient(
                         colors: [Color(0xFF534978), Color(0xFF6B6192)],
                       ),
                       onTap: () => widget.onNavigateTab?.call(4),
+                    ),
+                    const SizedBox(width: 12),
+                    _buildModuleCard(
+                      icon: Icons.grid_view_rounded,
+                      title: 'Habit Cal',
+                      subtitle: 'Streak Heatmap',
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF00897B), Color(0xFF26A69A)],
+                      ),
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const HabitCalendarScreen()),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    _buildModuleCard(
+                      icon: Icons.auto_stories,
+                      title: 'Jurnal',
+                      subtitle: 'Refleksi Harian',
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFE91E63), Color(0xFFF06292)],
+                      ),
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const ReflectionJournalScreen()),
+                      ),
                     ),
                   ],
                 ),

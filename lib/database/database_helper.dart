@@ -5,11 +5,14 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import '../models/task_model.dart';
 import '../models/transaction_model.dart';
 import '../models/study_pod_model.dart';
+import '../models/habit_model.dart';
+import '../models/journal_model.dart';
+import '../models/focus_session_model.dart';
 import 'neon_database_helper.dart';
 
 class DatabaseHelper {
   static const String _dbName = 'ritme_database.db';
-  static const int _dbVersion = 3;
+  static const int _dbVersion = 4;
 
   static final DatabaseHelper instance = DatabaseHelper._internal();
   DatabaseHelper._internal();
@@ -23,7 +26,6 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDatabase() async {
-    // Inisialisasi FFI untuk platform desktop (Windows, Linux, macOS)
     if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
       sqfliteFfiInit();
       databaseFactory = databaseFactoryFfi;
@@ -104,6 +106,64 @@ class DatabaseHelper {
         timestamp TEXT NOT NULL
       )
     ''');
+
+    // 6. Tabel Habits
+    await db.execute('''
+      CREATE TABLE habits (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        category TEXT NOT NULL,
+        streak_count INTEGER NOT NULL,
+        is_completed_today INTEGER NOT NULL,
+        last_completed_date TEXT NOT NULL
+      )
+    ''');
+
+    // 7. Tabel Journal Entries
+    await db.execute('''
+      CREATE TABLE journal_entries (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT NOT NULL,
+        content TEXT NOT NULL,
+        mood_level INTEGER NOT NULL DEFAULT 3,
+        created_at TEXT NOT NULL
+      )
+    ''');
+
+    // 8. Tabel Focus Sessions
+    await db.execute('''
+      CREATE TABLE focus_sessions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        task_id INTEGER,
+        task_title TEXT NOT NULL,
+        duration_minutes INTEGER NOT NULL,
+        session_type TEXT NOT NULL DEFAULT 'focus',
+        completed_at TEXT NOT NULL
+      )
+    ''');
+
+    // Seed default habits
+    await db.insert('habits', {
+      'title': 'Membaca 15 Menit',
+      'category': 'Pengembangan Diri',
+      'streak_count': 4,
+      'is_completed_today': 0,
+      'last_completed_date': '',
+    });
+    await db.insert('habits', {
+      'title': 'Olahraga Ringan / Stretches',
+      'category': 'Kesehatan',
+      'streak_count': 7,
+      'is_completed_today': 1,
+      'last_completed_date': DateTime.now().toIso8601String().split('T').first,
+    });
+    await db.insert('habits', {
+      'title': 'Jeda Istirahat Layar & Meditasi',
+      'category': 'Fokus & Mental',
+      'streak_count': 3,
+      'is_completed_today': 0,
+      'last_completed_date': '',
+    });
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -120,6 +180,37 @@ class DatabaseHelper {
           text TEXT NOT NULL,
           has_card INTEGER NOT NULL,
           timestamp TEXT NOT NULL
+        )
+      ''');
+    }
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS habits (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        category TEXT NOT NULL,
+        streak_count INTEGER NOT NULL,
+        is_completed_today INTEGER NOT NULL,
+        last_completed_date TEXT NOT NULL
+      )
+    ''');
+    if (oldVersion < 4) {
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS journal_entries (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          date TEXT NOT NULL,
+          content TEXT NOT NULL,
+          mood_level INTEGER NOT NULL DEFAULT 3,
+          created_at TEXT NOT NULL
+        )
+      ''');
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS focus_sessions (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          task_id INTEGER,
+          task_title TEXT NOT NULL,
+          duration_minutes INTEGER NOT NULL,
+          session_type TEXT NOT NULL DEFAULT 'focus',
+          completed_at TEXT NOT NULL
         )
       ''');
     }
@@ -381,6 +472,157 @@ class DatabaseHelper {
     }
   }
 
+  // ================= HABITS OPERATIONS =================
+
+  Future<List<HabitModel>> getHabits() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query('habits', orderBy: 'id ASC');
+    if (maps.isEmpty) {
+      await db.insert('habits', {
+        'title': 'Membaca 15 Menit',
+        'category': 'Pengembangan Diri',
+        'streak_count': 4,
+        'is_completed_today': 0,
+        'last_completed_date': '',
+      });
+      await db.insert('habits', {
+        'title': 'Olahraga Ringan / Stretches',
+        'category': 'Kesehatan',
+        'streak_count': 7,
+        'is_completed_today': 1,
+        'last_completed_date': DateTime.now().toIso8601String().split('T').first,
+      });
+      final reMaps = await db.query('habits', orderBy: 'id ASC');
+      return reMaps.map((m) => HabitModel.fromMap(m)).toList();
+    }
+    return maps.map((m) => HabitModel.fromMap(m)).toList();
+  }
+
+  Future<int> insertHabit(HabitModel habit) async {
+    final db = await database;
+    return await db.insert('habits', habit.toMap());
+  }
+
+  Future<int> toggleHabitCompletion(HabitModel habit) async {
+    final db = await database;
+    final newStatus = !habit.isCompletedToday;
+    final newStreak = newStatus ? habit.streakCount + 1 : (habit.streakCount > 0 ? habit.streakCount - 1 : 0);
+    final todayStr = newStatus ? DateTime.now().toIso8601String().split('T').first : '';
+
+    return await db.update(
+      'habits',
+      {
+        'is_completed_today': newStatus ? 1 : 0,
+        'streak_count': newStreak,
+        'last_completed_date': todayStr,
+      },
+      where: 'id = ?',
+      whereArgs: [habit.id],
+    );
+  }
+
+  Future<int> deleteHabit(int id) async {
+    final db = await database;
+    return await db.delete('habits', where: 'id = ?', whereArgs: [id]);
+  }
+
+  // ================= JOURNAL OPERATIONS =================
+
+  Future<int> saveJournalEntry(JournalModel entry) async {
+    final db = await database;
+    // Upsert by date: hapus entri lama di hari yang sama, lalu insert baru
+    await db.delete('journal_entries', where: 'date = ?', whereArgs: [entry.date]);
+    return await db.insert('journal_entries', entry.toMap());
+  }
+
+  Future<JournalModel?> getJournalEntryByDate(String date) async {
+    final db = await database;
+    final maps = await db.query(
+      'journal_entries',
+      where: 'date = ?',
+      whereArgs: [date],
+      limit: 1,
+    );
+    if (maps.isNotEmpty) return JournalModel.fromMap(maps.first);
+    return null;
+  }
+
+  Future<List<JournalModel>> getAllJournalEntries() async {
+    final db = await database;
+    final maps = await db.query('journal_entries', orderBy: 'date DESC');
+    return maps.map((m) => JournalModel.fromMap(m)).toList();
+  }
+
+  /// Menghitung berapa hari berturut-turut user menulis jurnal
+  Future<int> getJournalStreak() async {
+    final db = await database;
+    final maps = await db.query('journal_entries', orderBy: 'date DESC');
+    if (maps.isEmpty) return 0;
+
+    int streak = 0;
+    DateTime checkDate = DateTime.now();
+
+    for (final m in maps) {
+      final entryDate = DateTime.tryParse(m['date'] as String);
+      if (entryDate == null) break;
+
+      final diff = checkDate.difference(entryDate).inDays;
+      if (diff == 0 || diff == 1) {
+        streak++;
+        checkDate = entryDate.subtract(const Duration(days: 1));
+      } else {
+        break;
+      }
+    }
+    return streak;
+  }
+
+  Future<int> deleteJournalEntry(int id) async {
+    final db = await database;
+    return await db.delete('journal_entries', where: 'id = ?', whereArgs: [id]);
+  }
+
+  // ================= FOCUS SESSIONS OPERATIONS =================
+
+  Future<int> saveFocusSession(FocusSessionModel session) async {
+    final db = await database;
+    return await db.insert('focus_sessions', session.toMap());
+  }
+
+  Future<List<FocusSessionModel>> getFocusSessionsThisWeek() async {
+    final db = await database;
+    final now = DateTime.now();
+    final weekStart = now.subtract(Duration(days: now.weekday - 1));
+    final weekStartStr = '${weekStart.year}-${weekStart.month.toString().padLeft(2, '0')}-${weekStart.day.toString().padLeft(2, '0')}';
+
+    final maps = await db.query(
+      'focus_sessions',
+      where: "session_type = 'focus' AND completed_at >= ?",
+      whereArgs: [weekStartStr],
+      orderBy: 'completed_at ASC',
+    );
+    return maps.map((m) => FocusSessionModel.fromMap(m)).toList();
+  }
+
+  /// Mengembalikan total menit fokus per hari untuk 7 hari terakhir (index 0=Mon..6=Sun)
+  Future<List<int>> getWeeklyFocusMinutes() async {
+    final sessions = await getFocusSessionsThisWeek();
+    final List<int> perDay = List.filled(7, 0); // 0=Mon, 6=Sun
+
+    for (final s in sessions) {
+      final dt = DateTime.tryParse(s.completedAt);
+      if (dt == null) continue;
+      final dayIndex = dt.weekday - 1; // Monday=0
+      perDay[dayIndex] += s.durationMinutes;
+    }
+    return perDay;
+  }
+
+  Future<int> getTotalFocusMinutesThisWeek() async {
+    final sessions = await getFocusSessionsThisWeek();
+    return sessions.fold<int>(0, (sum, s) => sum + s.durationMinutes);
+  }
+
   // ================= CONTEXT DATA UNTUK GEMINI =================
 
   Future<String> getSummaryForGemini() async {
@@ -388,6 +630,7 @@ class DatabaseHelper {
     final tasks = await getTasks(onlyIncomplete: true);
     final balance = await calculateTotalBalance();
     final pods = await getStudyPods();
+    final focusMinutes = await getTotalFocusMinutesThisWeek();
 
     return '''
 KONTEKS TERBARU DARI CLOUD NEONDB POSTGRESQL / SQLITE RITME:
@@ -395,6 +638,7 @@ KONTEKS TERBARU DARI CLOUD NEONDB POSTGRESQL / SQLITE RITME:
 2. Total Tugas Belum Selesai: ${tasks.length} tugas.
 3. Total Saldo Keuangan: Rp ${balance.toStringAsFixed(0)}
 4. Pod Belajar Terakhir: ${pods.isNotEmpty ? pods.first.title : 'Belum ada materi.'}
+5. Total Fokus Minggu Ini: $focusMinutes menit.
 ''';
   }
 }

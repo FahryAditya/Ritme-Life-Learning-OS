@@ -7,7 +7,7 @@ import 'home_dashboard_screen.dart';
 import 'task_tempo_sync_screen.dart';
 import 'gemini_assistant_screen.dart';
 import 'finance_tracker_screen.dart';
-import 'audio_study_pod_screen.dart';
+import 'voice_to_text_screen.dart';
 
 class MainNavigationScaffold extends StatefulWidget {
   const MainNavigationScaffold({super.key});
@@ -37,7 +37,7 @@ class _MainNavigationScaffoldState extends State<MainNavigationScaffold> {
       const TaskTempoSyncScreen(),
       const GeminiAssistantScreen(),
       const FinanceTrackerScreen(),
-      const AudioStudyPodScreen(),
+      const VoiceToTextScreen(),
     ];
 
     return Scaffold(
@@ -178,7 +178,7 @@ class _MainNavigationScaffoldState extends State<MainNavigationScaffold> {
                       _buildNavItem(3, Icons.account_balance_wallet_outlined,
                           Icons.account_balance_wallet, 'Finance'),
                       _buildNavItem(
-                          4, Icons.headphones_outlined, Icons.headphones, 'Audio'),
+                          4, Icons.mic_none_outlined, Icons.mic, 'Voice AI'),
                     ],
                   ),
                 ),

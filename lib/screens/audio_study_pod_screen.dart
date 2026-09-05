@@ -226,7 +226,7 @@ class _AudioStudyPodScreenState extends State<AudioStudyPodScreen> {
                             Navigator.pop(ctx);
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('🎉 Kuis Selesai! Skor Anda: $score / ${questions.length}'),
+                                content: Text('Kuis Selesai! Skor Anda: $score / ${questions.length}'),
                                 backgroundColor: AppColors.primary,
                               ),
                             );
@@ -295,7 +295,7 @@ class _AudioStudyPodScreenState extends State<AudioStudyPodScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Audio Study Pod 🎙️📖',
+                        'Audio Study Pod',
                         style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: AppColors.onSurface,

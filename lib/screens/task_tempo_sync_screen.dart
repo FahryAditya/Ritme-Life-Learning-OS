@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../database/database_helper.dart';
 import '../models/task_model.dart';
+import '../models/focus_session_model.dart';
 import '../services/gemini_service.dart';
 import '../services/ritme_data_notifier.dart';
 import '../theme/app_theme.dart';
 import '../widgets/glass_card.dart';
+import '../widgets/pomodoro_timer_dialog.dart';
+import '../widgets/weekly_bar_chart_widget.dart';
 
 class TaskTempoSyncScreen extends StatefulWidget {
   const TaskTempoSyncScreen({super.key});
@@ -27,6 +30,9 @@ class _TaskTempoSyncScreenState extends State<TaskTempoSyncScreen>
   int _currentBpm = 62;
   bool _autoTransition = true;
   bool _dynamicDucking = true;
+  String _viewMode = 'list'; // 'list' or 'kanban'
+  List<int> _weeklyFocusMinutes = List.filled(7, 0);
+  int _totalFocusMinutes = 0;
 
   final List<Map<String, dynamic>> _presets = [
     {
@@ -81,6 +87,8 @@ class _TaskTempoSyncScreenState extends State<TaskTempoSyncScreen>
   Future<void> _loadDataFromDb() async {
     final active = await DatabaseHelper.instance.getActiveTask();
     final allTasks = await DatabaseHelper.instance.getTasks();
+    final weeklyMins = await DatabaseHelper.instance.getWeeklyFocusMinutes();
+    final totalMins = await DatabaseHelper.instance.getTotalFocusMinutesThisWeek();
 
     if (mounted) {
       setState(() {
@@ -89,9 +97,22 @@ class _TaskTempoSyncScreenState extends State<TaskTempoSyncScreen>
           _currentBpm = _activeTask!.bpm;
         }
         _upcomingTasks = allTasks.where((t) => t.id != _activeTask?.id).toList();
+        _weeklyFocusMinutes = weeklyMins;
+        _totalFocusMinutes = totalMins;
         _isLoading = false;
       });
     }
+  }
+
+  Future<void> _saveFocusSession(int minutes) async {
+    final session = FocusSessionModel(
+      taskId: _activeTask?.id,
+      taskTitle: _activeTask?.title ?? 'Sesi Bebas',
+      durationMinutes: minutes,
+      sessionType: 'focus',
+    );
+    await DatabaseHelper.instance.saveFocusSession(session);
+    _loadDataFromDb();
   }
 
   Future<void> _switchToTask(TaskModel task) async {
@@ -369,10 +390,53 @@ class _TaskTempoSyncScreenState extends State<TaskTempoSyncScreen>
                       ],
                     ),
                   ),
-                  IconButton(
-                    onPressed: _showAddTaskDialog,
-                    icon: const Icon(Icons.add_circle, color: AppColors.primary, size: 26),
-                    tooltip: 'Tambah Tugas',
+                  Row(
+                    children: [
+                      // Toggle Kanban / List View
+                      GestureDetector(
+                        onTap: () => setState(() =>
+                            _viewMode = _viewMode == 'list' ? 'kanban' : 'list'),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: _viewMode == 'kanban'
+                                ? AppColors.primaryFixed
+                                : AppColors.surfaceContainerHigh,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                _viewMode == 'kanban'
+                                    ? Icons.view_column_outlined
+                                    : Icons.view_list_outlined,
+                                size: 16,
+                                color: _viewMode == 'kanban'
+                                    ? AppColors.primary
+                                    : AppColors.onSurfaceVariant,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                _viewMode == 'kanban' ? 'Kanban' : 'List',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: _viewMode == 'kanban'
+                                      ? AppColors.primary
+                                      : AppColors.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: _showAddTaskDialog,
+                        icon: const Icon(Icons.add_circle, color: AppColors.primary, size: 26),
+                        tooltip: 'Tambah Tugas',
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -384,7 +448,7 @@ class _TaskTempoSyncScreenState extends State<TaskTempoSyncScreen>
                 children: [
                   Expanded(
                     child: Text(
-                      'Task-Tempo Sync 🎧⚡',
+                      'Task-Tempo Sync',
                       style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                             fontSize: 26,
                             fontWeight: FontWeight.w700,
@@ -866,84 +930,107 @@ class _TaskTempoSyncScreenState extends State<TaskTempoSyncScreen>
                         ],
                       ),
                     ),
+                    const SizedBox(height: 14),
+
+                    // Pomodoro Focus Timer Launch Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 44,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (ctx) => PomodoroTimerDialog(
+                              taskTitle: active?.title ?? 'Tugas Fokus Ritme',
+                              bpm: _currentBpm,
+                              onSessionComplete: _saveFocusSession,
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.timer_outlined, color: Colors.white, size: 18),
+                        label: const Text(
+                          'Mulai Sesi Pomodoro (25 Min)',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                          elevation: 1,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.06, end: 0),
               const SizedBox(height: 24),
 
-              // Smart Dynamic Shift Preview / Upcoming Tasks from SQLite
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.upcoming,
-                        size: 20,
-                        color: AppColors.primary,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        'Jadwal Pergeseran Dinamis',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    '${_upcomingTasks.length} Tugas Terjadwal',
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: AppColors.secondary,
-                          fontWeight: FontWeight.w600,
+              // Task View: List or Kanban Board
+              if (_viewMode == 'list') ...[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.upcoming, size: 20, color: AppColors.primary),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Jadwal Pergeseran Dinamis',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                         ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-
-              if (_upcomingTasks.isEmpty)
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: AppColors.outlineVariant.withValues(alpha: 0.3),
+                      ],
                     ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      active != null
-                          ? 'Semua tugas lainnya terselesaikan! Sentuh + di atas untuk menambah tugas baru.'
-                          : 'Belum ada jadwal tugas di database SQLite. Sentuh tombol + di atas untuk menambahkan tugas baru.',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 12, color: AppColors.onSurfaceVariant),
+                    Text(
+                      '${_upcomingTasks.length} Tugas Terjadwal',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            color: AppColors.secondary, fontWeight: FontWeight.w600),
                     ),
-                  ),
-                )
-              else
-                ..._upcomingTasks.map((t) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: InkWell(
-                      onTap: () => _switchToTask(t),
-                      borderRadius: BorderRadius.circular(18),
-                      child: _buildShiftCard(
-                        time: '${t.scheduledTime} (Sentuh untuk aktifkan)',
-                        cognitiveLevel: t.category,
-                        badgeColor: t.isUrgent ? AppColors.errorContainer : AppColors.primaryFixed,
-                        badgeTextColor: t.isUrgent ? AppColors.onErrorContainer : AppColors.onPrimaryFixed,
-                        icon: t.isUrgent ? Icons.bolt : Icons.task_alt,
-                        iconBgColor: AppColors.secondaryFixed,
-                        iconColor: AppColors.onSecondaryFixed,
-                        title: t.title,
-                        bpm: '${t.bpm} BPM',
-                        genre: t.genre,
+                  ],
+                ),
+                const SizedBox(height: 12),
+                if (_upcomingTasks.isEmpty)
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.3)),
+                    ),
+                    child: Center(
+                      child: Text(
+                        active != null
+                            ? 'Semua tugas lainnya terselesaikan! Sentuh + di atas untuk menambah tugas baru.'
+                            : 'Belum ada jadwal tugas di database SQLite. Sentuh tombol + di atas untuk menambahkan tugas baru.',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 12, color: AppColors.onSurfaceVariant),
                       ),
                     ),
-                  );
-                }),
+                  )
+                else
+                  ..._upcomingTasks.map((t) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: InkWell(
+                        onTap: () => _switchToTask(t),
+                        borderRadius: BorderRadius.circular(18),
+                        child: _buildShiftCard(
+                          time: '${t.scheduledTime} (Sentuh untuk aktifkan)',
+                          cognitiveLevel: t.category,
+                          badgeColor: t.isUrgent ? AppColors.errorContainer : AppColors.primaryFixed,
+                          badgeTextColor: t.isUrgent ? AppColors.onErrorContainer : AppColors.onPrimaryFixed,
+                          icon: t.isUrgent ? Icons.bolt : Icons.task_alt,
+                          iconBgColor: AppColors.secondaryFixed,
+                          iconColor: AppColors.onSecondaryFixed,
+                          title: t.title,
+                          bpm: '${t.bpm} BPM',
+                          genre: t.genre,
+                        ),
+                      ),
+                    );
+                  }),
+              ] else ...[
+                // KANBAN BOARD VIEW
+                _buildKanbanBoard(),
+              ],
               const SizedBox(height: 18),
 
               // Mode Switcher Chips (Favorite AI Tempo Presets)
@@ -1006,6 +1093,10 @@ class _TaskTempoSyncScreenState extends State<TaskTempoSyncScreen>
                   }),
                 ),
               ),
+              const SizedBox(height: 24),
+
+              // Focus Stats Section
+              _buildFocusStatsSection(),
               const SizedBox(height: 24),
 
               // Real-time Sync Controls & Sensitivity Toggles
@@ -1199,6 +1290,263 @@ class _TaskTempoSyncScreenState extends State<TaskTempoSyncScreen>
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildFocusStatsSection() {
+    final todayIndex = DateTime.now().weekday - 1;
+    final totalH = _totalFocusMinutes ~/ 60;
+    final totalM = _totalFocusMinutes % 60;
+
+    return GlassCard(
+      borderRadius: 22,
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Row(
+                children: [
+                  Icon(Icons.bar_chart_rounded, color: AppColors.primary, size: 20),
+                  SizedBox(width: 8),
+                  Text(
+                    'Statistik Fokus Minggu Ini',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                  ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryFixed,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  _totalFocusMinutes > 0
+                      ? '${totalH}j ${totalM}m total'
+                      : 'Mulai sesi pertama!',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.onPrimaryFixed,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          WeeklyBarChartWidget(
+            minutesPerDay: _weeklyFocusMinutes,
+            todayIndex: todayIndex,
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'Tap tombol Selesai di Pomodoro untuk merekam sesi',
+            style: TextStyle(fontSize: 11, color: AppColors.onSurfaceVariant),
+          ),
+        ],
+      ),
+    ).animate().fadeIn(delay: 200.ms, duration: 400.ms);
+  }
+
+  Widget _buildKanbanBoard() {
+    final allTasks = [
+      ?_activeTask,
+      ..._upcomingTasks,
+    ];
+    final todo = allTasks.where((t) => !t.isCompleted && !t.isActive).toList();
+    final inProgress = allTasks.where((t) => t.isActive && !t.isCompleted).toList();
+    final done = allTasks.where((t) => t.isCompleted).toList();
+
+    return SizedBox(
+      height: 340,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildKanbanColumn('Todo', todo, AppColors.surfaceContainerHigh, AppColors.onSurfaceVariant, 'todo'),
+          const SizedBox(width: 8),
+          _buildKanbanColumn('In Progress', inProgress, AppColors.primaryFixed, AppColors.primary, 'active'),
+          const SizedBox(width: 8),
+          _buildKanbanColumn('Selesai', done, const Color(0xFFE8F5E9), Colors.green, 'done'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildKanbanColumn(
+    String title,
+    List<TaskModel> tasks,
+    Color bgColor,
+    Color titleColor,
+    String columnId,
+  ) {
+    return Expanded(
+      child: DragTarget<TaskModel>(
+        onAcceptWithDetails: (details) async {
+          final task = details.data;
+          if (task.id == null) return;
+          if (columnId == 'active') {
+            await DatabaseHelper.instance.setActiveTask(task.id!);
+          } else if (columnId == 'done') {
+            await DatabaseHelper.instance.updateTask(task.copyWith(isCompleted: true, isActive: false));
+          } else {
+            await DatabaseHelper.instance.updateTask(task.copyWith(isCompleted: false, isActive: false));
+          }
+          RitmeDataNotifier.instance.notifyDataChanged();
+          await _loadDataFromDb();
+        },
+        builder: (context, candidateData, rejectedData) {
+          final isHovered = candidateData.isNotEmpty;
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: isHovered ? bgColor.withValues(alpha: 0.8) : bgColor.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isHovered ? titleColor : Colors.transparent,
+                width: 1.5,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(color: titleColor, shape: BoxShape.circle),
+                    ),
+                    const SizedBox(width: 5),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          color: titleColor,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Container(
+                      width: 18,
+                      height: 18,
+                      decoration: BoxDecoration(color: titleColor.withValues(alpha: 0.15), shape: BoxShape.circle),
+                      child: Center(
+                        child: Text(
+                          '${tasks.length}',
+                          style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: titleColor),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: ListView.separated(
+                    itemCount: tasks.length,
+                    separatorBuilder: (_, index) => const SizedBox(height: 6),
+                    itemBuilder: (context, i) {
+                      final t = tasks[i];
+                      return Draggable<TaskModel>(
+                        data: t,
+                        feedback: Material(
+                          color: Colors.transparent,
+                          child: Container(
+                            width: 100,
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.primary.withValues(alpha: 0.4),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Text(
+                              t.title,
+                              style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                        childWhenDragging: Opacity(
+                          opacity: 0.3,
+                          child: _buildKanbanCard(t),
+                        ),
+                        child: _buildKanbanCard(t),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildKanbanCard(TaskModel task) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            task.title,
+            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              const Icon(Icons.speed, size: 10, color: AppColors.onSurfaceVariant),
+              const SizedBox(width: 3),
+              Expanded(
+                child: Text(
+                  '${task.bpm} BPM',
+                  style: const TextStyle(fontSize: 9, color: AppColors.onSurfaceVariant),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (task.isUrgent)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                  decoration: BoxDecoration(
+                    color: AppColors.errorContainer,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: const Text(
+                    'Urgent',
+                    style: TextStyle(fontSize: 8, color: AppColors.onErrorContainer, fontWeight: FontWeight.w700),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
